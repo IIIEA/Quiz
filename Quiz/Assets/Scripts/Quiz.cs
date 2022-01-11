@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 public class Quiz : MonoBehaviour
 {
-    [SerializeField] private LevelGrid _level;
+    [SerializeField] private Level _level;
 
     private string _quizTarget;
     private List<string> _usedQuiz = new List<string>();
