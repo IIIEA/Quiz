@@ -57,23 +57,18 @@ public class GridObjects : MonoBehaviour
         {
             card.CorrectCard -= OnCorrectCard;
         }
+
+        StopCoroutine(BounceEffect());
     }
 
     private void OnCorrectCard()
     {
         _currentLvlIndex++;
-        LevelStarted?.Invoke();
 
-        foreach (Transform child in transform)
-            Destroy(child.gameObject);
-
-        StopCoroutine(BounceEffect());
-        _usedCards.Clear();
-
-        Fill(_currentLvlIndex);
-        _layout.constraintCount = _currentLvl.RowsCount;
-
-        Debug.Log(_currentLvlIndex);
+        if (_currentLvlIndex < _levels.Length)
+            StartCoroutine(StartNewLvl());
+        else
+            StopCoroutine(StartNewLvl());
     }
 
     private void Fill(int lvlIndex)
@@ -105,7 +100,30 @@ public class GridObjects : MonoBehaviour
         _usedCards = cardBundle.CardData.Except(_usedCards).ToList();
     }
 
-    IEnumerator BounceEffect()
+    private IEnumerator StartNewLvl()
+    {
+        yield return new WaitForSeconds(0.4f);
+
+        DOTween.KillAll();
+
+        foreach (Transform child in transform)
+            Destroy(child.gameObject);
+
+        _usedCards.Clear();
+
+        Fill(_currentLvlIndex);
+        _cards = GetComponentsInChildren<Card>();
+        _layout.constraintCount = _currentLvl.RowsCount;
+
+        foreach (var card in _cards)
+        {
+            card.CorrectCard += OnCorrectCard;
+        }
+
+        LevelStarted?.Invoke();
+    }
+
+    private IEnumerator BounceEffect()
     {
         yield return new WaitForSeconds(0.3f);
 
