@@ -3,18 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
+using System.Linq;
+using UnityEngine.Events;
 
-[RequireComponent(typeof(GridLayoutGroup))]
+[RequireComponent(typeof(GridLayoutGroup), typeof (Quiz))]
 public class GridObjects : MonoBehaviour
 {
     [SerializeField] private LevelData[] _levels;
-    [SerializeField] private Card _card;
+    [SerializeField] private Card _template;
 
+    private Quiz _quiz;
     private GridLayoutGroup _layout;
     private LevelData _currentLvl;
+    private int _currentLvlIndex = 0;
+    private List<CardData> _usedCards = new List<CardData>();
+    private Card[] _cards;
+
+    public event UnityAction LevelStarted;
+    public List<CardData> UsedCards => _usedCards;
 
     private void Awake()
     {
+        _quiz = GetComponent<Quiz>();
         _layout = GetComponent<GridLayoutGroup>();
 
         _layout.constraint = GridLayoutGroup.Constraint.FixedRowCount;
@@ -22,21 +32,48 @@ public class GridObjects : MonoBehaviour
 
     private void Start()
     {
+        LevelStarted?.Invoke();
         transform.localScale = Vector3.zero;
         StartCoroutine(BounceEffect());
     }
 
     private void OnEnable()
     {
-        Fill(1);
+        Fill(_currentLvlIndex);
+
+        _cards = GetComponentsInChildren<Card>();
+
+        foreach (var card in _cards)
+        {
+            card.CorrectCard += OnCorrectCard;
+        }
+
+        _layout.constraintCount = _currentLvl.RowsCount;
     }
 
     private void OnDisable()
     {
+        foreach (var card in _cards)
+        {
+            card.CorrectCard -= OnCorrectCard;
+        }
+    }
+
+    private void OnCorrectCard()
+    {
+        _currentLvlIndex++;
+        LevelStarted?.Invoke();
+
         foreach (Transform child in transform)
             Destroy(child.gameObject);
 
         StopCoroutine(BounceEffect());
+        _usedCards.Clear();
+
+        Fill(_currentLvlIndex);
+        _layout.constraintCount = _currentLvl.RowsCount;
+
+        Debug.Log(_currentLvlIndex);
     }
 
     private void Fill(int lvlIndex)
@@ -45,17 +82,27 @@ public class GridObjects : MonoBehaviour
             return;
 
         _currentLvl = _levels[lvlIndex];
-        _layout.constraintCount = _currentLvl.RowsCount;
+        
+        var cardBundle = _currentLvl.GetRandomCardBundle();
 
-        var dataSet = _currentLvl.GetRandomDataSet();
+        foreach (var cardData in cardBundle.CardData)
+        {
+            _usedCards.Add(cardData);
+        }
+
+        int randomIndex;
 
         for (int i = 0; i < (_currentLvl.RowsCount * _currentLvl.ColumnsCount); i++)
         {
-            var cardData = dataSet.GetRandomCardData();
-            var card = Instantiate(_card, transform);
+            randomIndex = Random.Range(0, _usedCards.Count);
 
-            card.Init(cardData.Icon, cardData.Identifier);
+            var card = Instantiate(_template, transform);
+            card.Init(_usedCards[randomIndex].Icon, _usedCards[randomIndex].Identifier);
+
+            _usedCards.RemoveAt(randomIndex);
         }
+
+        _usedCards = cardBundle.CardData.Except(_usedCards).ToList();
     }
 
     IEnumerator BounceEffect()
@@ -65,6 +112,6 @@ public class GridObjects : MonoBehaviour
         Sequence sequence = DOTween.Sequence();
         sequence.Append(transform.DOScale(2.7f, 0.2f));
         sequence.Append(transform.DOScale(2f, 0.15f));
-        sequence.Append(transform.DOScale(2.5f, 0.15f));
+        sequence.Append(transform.DOScale(2.2f, 0.15f));
     }
 }

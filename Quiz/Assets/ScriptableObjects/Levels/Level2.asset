@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ca7f0f067ef82d41bc723f845811542, type: 3}
   m_Name: Level2
   m_EditorClassIdentifier: 
-  _dataSet:
-  - {fileID: 11400000, guid: ad0c20cfa7387ca469a61a360bd35f98, type: 2}
-  - {fileID: 11400000, guid: 7ed81620160decd47b8207032d073fb1, type: 2}
+  _cardBundleData:
+  - {fileID: 11400000, guid: 629e442ce6a31114da27a3924f2c24dd, type: 2}
+  - {fileID: 11400000, guid: 04d48f1cd57ec1142b35648600fdfdc0, type: 2}
   _rowsCount: 2
   _columnsCount: 3

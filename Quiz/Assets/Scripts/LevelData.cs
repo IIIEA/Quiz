@@ -5,18 +5,17 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "new LevelData", menuName = "Level Data", order = 51)]
 public class LevelData : ScriptableObject
 {
-    [SerializeField] private CardBundleData[] _dataSet;
+    [SerializeField] private List<CardBundleData> _cardBundleData;
     [SerializeField] private int _rowsCount;
     [SerializeField] private int _columnsCount;
 
-    public CardBundleData[] DataSet => _dataSet;
     public int RowsCount => _rowsCount;
     public int ColumnsCount => _columnsCount;
 
-    public CardBundleData GetRandomDataSet()
+    public CardBundleData GetRandomCardBundle()
     {
-        int randomIndex = Random.Range(0, _dataSet.Length);
+        int randomIndex = Random.Range(0, _cardBundleData.Count);
 
-        return _dataSet[randomIndex];
+        return _cardBundleData[randomIndex];
     }
 }
