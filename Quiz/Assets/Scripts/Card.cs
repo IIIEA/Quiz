@@ -5,7 +5,7 @@ using UnityEngine.Events;
 using DG.Tweening;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(ParticleSystem))]
+
 public class Card : MonoBehaviour
 {
     [SerializeField] private Image _icon;
@@ -13,13 +13,12 @@ public class Card : MonoBehaviour
 
     private Quiz _quiz;
     private string _identifier;
-    private ParticleSystem _particles;
 
-    public event UnityAction CorrectCard;
+    public event UnityAction<Transform> CorrectCard;
 
     private void Awake()
     {
-        _particles = GetComponent<ParticleSystem>();
+
         _quiz = GetComponentInParent<Quiz>();
     }
 
@@ -49,9 +48,8 @@ public class Card : MonoBehaviour
         if(_identifier == _quiz.QuizTarget)
         {
             BounceEffect(_icon.transform);
-            _particles.Play();
 
-            CorrectCard?.Invoke();
+            CorrectCard?.Invoke(gameObject.transform);
         }
         else
         {

@@ -15,6 +15,7 @@ public class Level : MonoBehaviour
     [SerializeField] private RestartButton _restartButton;
     [SerializeField] private Image _backgroundFade;
     [SerializeField] private Image _loadingScreen;
+    [SerializeField] private ParticleSystem _particles;
 
     private Quiz _quiz;
     private GridLayoutGroup _layout;
@@ -69,9 +70,11 @@ public class Level : MonoBehaviour
         _restartButton.Restarted -= OnRestartButtonClick;
     }
 
-    private void OnCorrectCard()
+    private void OnCorrectCard(Transform transform)
     {
         _currentLvlIndex++;
+        _particles.transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+        _particles.Play();
 
         if (_currentLvlIndex < _levels.Length)
         {
