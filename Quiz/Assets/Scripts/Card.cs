@@ -9,9 +9,9 @@ using UnityEngine.UI;
 public class Card : MonoBehaviour
 {
     [SerializeField] private Image _icon;
+    [SerializeField] private Button _button;
 
     private Quiz _quiz;
-    private Button _button;
     private string _identifier;
     private ParticleSystem _particles;
 
@@ -21,7 +21,6 @@ public class Card : MonoBehaviour
     {
         _particles = GetComponent<ParticleSystem>();
         _quiz = GetComponentInParent<Quiz>();
-        _button = GetComponentInChildren<Button>();
     }
 
     private void OnEnable()

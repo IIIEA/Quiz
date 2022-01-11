@@ -52,6 +52,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _icon: {fileID: 5271421101330416556}
+  _button: {fileID: 6812368218007931683}
 --- !u!198 &1061093811484367726
 ParticleSystem:
   m_ObjectHideFlags: 0

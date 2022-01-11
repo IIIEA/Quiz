@@ -8,18 +8,17 @@ using DG.Tweening;
 public class QuizPanel : MonoBehaviour
 {
     [SerializeField] private Quiz _quiz;
-    
-    private TMP_Text _tmpText;
+    [SerializeField] private TMP_Text _tmpText;
+
     private CanvasGroup _canvas;
 
-    private const string _quizText = "Choose ";
+    private const string QuizText = "Choose ";
 
     private void Awake()
     {
         _canvas = GetComponent<CanvasGroup>();
-        _tmpText = GetComponentInChildren<TMP_Text>();
 
-        FadeOut();
+        OnGameStarted();
     }
 
     private void OnEnable()
@@ -32,13 +31,14 @@ public class QuizPanel : MonoBehaviour
         _quiz.QuizTaked -= OnQuizChanged;
     }
 
-    private void FadeOut()
+    private void OnGameStarted()
     {
+        _canvas.alpha = 0;
         _canvas.DOFade(1, 2);
     }
 
     private void OnQuizChanged(string currentQuiz)
     {
-        _tmpText.text = _quizText + currentQuiz;
+        _tmpText.text = QuizText + currentQuiz;
     }
 }
