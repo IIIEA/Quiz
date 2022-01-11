@@ -11,6 +11,8 @@ public class GridObjects : MonoBehaviour
 {
     [SerializeField] private LevelData[] _levels;
     [SerializeField] private Card _template;
+    [SerializeField] private RestartButton _restartButton;
+    [SerializeField] private Image _backgroundFade;
 
     private Quiz _quiz;
     private GridLayoutGroup _layout;
@@ -39,6 +41,8 @@ public class GridObjects : MonoBehaviour
 
     private void OnEnable()
     {
+        _restartButton.Restarted += OnRestartButtonClick;
+
         Fill(_currentLvlIndex);
 
         _cards = GetComponentsInChildren<Card>();
@@ -53,6 +57,8 @@ public class GridObjects : MonoBehaviour
 
     private void OnDisable()
     {
+        _restartButton.Restarted -= OnRestartButtonClick;
+
         foreach (var card in _cards)
         {
             card.CorrectCard -= OnCorrectCard;
@@ -66,9 +72,15 @@ public class GridObjects : MonoBehaviour
         _currentLvlIndex++;
 
         if (_currentLvlIndex < _levels.Length)
+        {
             StartCoroutine(StartNewLvl());
+        }
         else
+        {
+            _backgroundFade.gameObject.SetActive(true);
+            _backgroundFade.DOFade(1f, 1f);
             StopCoroutine(StartNewLvl());
+        }
     }
 
     private void Fill(int lvlIndex)
@@ -100,8 +112,21 @@ public class GridObjects : MonoBehaviour
         _usedCards = cardBundle.CardData.Except(_usedCards).ToList();
     }
 
+    private void OnRestartButtonClick()
+    {
+        _currentLvlIndex = 0;
+        StartCoroutine(StartNewLvl());
+        _backgroundFade.DOFade(1f, 1f);
+        _backgroundFade.gameObject.SetActive(false);
+    }
+
     private IEnumerator StartNewLvl()
     {
+        foreach (var card in _cards)
+        {
+            card.SetInteractable(false);
+        }
+
         yield return new WaitForSeconds(0.4f);
 
         DOTween.KillAll();

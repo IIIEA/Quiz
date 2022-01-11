@@ -8,7 +8,7 @@ public class Quiz : MonoBehaviour
     [SerializeField] private GridObjects _grid;
 
     private string _quizTarget;
-
+    private List<string> _usedQuiz = new List<string>();
     public string QuizTarget => _quizTarget;
 
     public event UnityAction<string> QuizTaked;
@@ -26,7 +26,16 @@ public class Quiz : MonoBehaviour
     public string TakeQuiz(List<CardData> cardData)
     {
         int randomIndex = Random.Range(0, cardData.Count);
-        
+        _usedQuiz.Add(cardData[randomIndex].Identifier);
+
+        foreach (var quiz in _usedQuiz)
+        {
+            while(quiz == cardData[randomIndex].Identifier)
+            {
+                randomIndex = Random.Range(0, cardData.Count);
+            }
+        }
+
         return cardData[randomIndex].Identifier;
     }
 

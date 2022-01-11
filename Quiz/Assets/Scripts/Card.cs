@@ -40,6 +40,11 @@ public class Card : MonoBehaviour
         _identifier = identifier;
     }
 
+    public void SetInteractable(bool value)
+    {
+        _button.interactable = value;
+    }
+
     private void OnClickButton()
     {
         if(_identifier == _quiz.QuizTarget)
